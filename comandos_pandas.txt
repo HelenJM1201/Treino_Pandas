@@ -1,0 +1,151 @@
+## Importação e criação de DataFrame
+import pandas as pd
+
+# Criar DataFrame a partir de um dicionário
+df = pd.DataFrame({
+    'nome': ['Ana', 'Bruno', 'Carlos'],
+    'idade': [25, 32, 40]
+})
+
+# Ler arquivos
+df = pd.read_csv('arquivo.csv')
+df = pd.read_excel('arquivo.xlsx')
+df = pd.read_json('arquivo.json')
+df = pd.read_sql('SELECT * FROM tabela', conexao)
+
+# Salvar arquivos
+df.to_csv('saida.csv', index=False)
+df.to_excel('saida.xlsx', index=False)
+
+## Exploração de dados
+
+df.head(n)        # Primeiras n linhas (default = 5)
+df.tail(n)        # Últimas n linhas
+df.shape          # (linhas, colunas)
+df.columns        # Lista de colunas
+df.info()         # Resumo do DataFrame
+df.describe()     # Estatísticas descritivas
+df.dtypes         # Tipos de dados por coluna
+
+## Seleção e indexação
+
+df['coluna']                 # Seleciona uma coluna
+df[['coluna1', 'coluna2']]   # Múltiplas colunas
+df.loc[linha, coluna]        # Por rótulo
+df.iloc[linha, coluna]       # Por posição
+df[df['idade'] > 30]         # Filtro condicional
+df[df['coluna'].isna()]      # Valores nulos
+df.set_index('id')           # Definir índice
+
+## Tratamento de valores nulos
+
+df.isna()                  # Verifica nulos
+df.isna().sum()            # Quantidade de nulos por coluna
+df.dropna()                # Remove linhas com nulo
+df.dropna(axis=1)          # Remove colunas com nulo
+df.fillna(0)               # Substitui nulos por 0
+df['coluna'].fillna(df['coluna'].mean())  # Média
+
+## Estatísticas e agregações
+
+df['coluna'].sum()
+df['coluna'].mean()
+df['coluna'].median()
+df['coluna'].min(), df['coluna'].max()
+df['coluna'].value_counts()
+df['coluna'].unique(), df['coluna'].nunique()
+df.groupby('categoria').mean()
+df.groupby(['coluna1', 'coluna2']).agg(['sum', 'mean'])
+
+## Transformações
+
+df['nova'] = df['a'] + df['b']          # Nova coluna calculada
+df['texto'].str.upper()                 # Manipulação de strings
+df['data'] = pd.to_datetime(df['data'])# Converter para datetime
+df['ano'] = df['data'].dt.year
+df['coluna'] = df['coluna'].astype(int)
+df.rename(columns={'a': 'b'})
+df.drop('coluna', axis=1)
+df.sort_values('coluna', ascending=False)
+df.apply(lambda x: x*2)                 # Aplicar função
+
+## Juntar, concatenar e mesclar
+
+pd.concat([df1, df2], axis=0)                    # Empilha (linhas)
+pd.concat([df1, df2], axis=1)                    # Junta lado a lado (colunas)
+pd.merge(df1, df2, on='chave')                   # Junção tipo SQL
+pd.merge(df1, df2, how='left', on='chave')       # Left join
+
+## Pivot, crosstab e tabelas dinâmicas
+
+df.pivot_table(index='regiao', columns='ano', values='valor', aggfunc='sum')
+pd.crosstab(df['sexo'], df['renda'])             # Tabela de contingência
+
+## Séries temporais
+
+df['data'] = pd.to_datetime(df['data'])
+df.set_index('data', inplace=True)
+df.resample('M').sum()        # Agrupamento mensal
+df['2024']                    # Filtro por ano
+df['2024-05':'2024-06']       # Filtro por intervalo
+
+## Loop e iteração (menos recomendado)
+
+for index, row in df.iterrows():
+    print(row['coluna'])
+
+# Melhor: operações vetorizadas com apply()
+df['coluna_nova'] = df['coluna'].apply(lambda x: x * 2)
+
+## Verificação e limpeza
+
+df.duplicated()           # Verifica duplicatas
+df.drop_duplicates()      # Remove duplicatas
+df.sample(5)              # Amostra aleatória
+df.sort_values(by='coluna')
+
+## Análise e estatísticas avançadas
+
+df.corr()             # Correlação entre colunas numéricas
+df.cov()              # Covariância
+df.quantile(0.25)     # Quartil (25%, 50%, 75%)
+df.skew()             # Assimetria (distribuição dos dados)
+df.kurt()             # Curtose (distribuição dos dados)
+
+## Manipulação de colunas e linhas
+
+df.insert(1, 'nova_coluna', valor)  # Insere coluna na posição 1
+df.pop('coluna')                    # Remove coluna e retorna
+df.at[0, 'coluna']                  # Acessa célula (rápido)
+df.iat[0, 1]                        # Acessa célula por posição
+
+## Transformações e engenharia de dados
+
+df['coluna'].map({'A': 1, 'B': 2})       # Mapeia valores
+df['texto'].str.contains('SP')          # Filtra com string
+df['texto'].str.extract(r'(\d{4})')     # Extrai padrão com regex
+df['coluna'].clip(lower=0, upper=100)   # Limita valores
+df.pipe(funcao)                         # Aplica função encadeada
+
+## Reorganizar dados
+
+df.transpose()             # Transpõe o DataFrame
+df.melt()                  # Desfaz pivot (de largo para longo)
+df.stack() / df.unstack()  # Empilha ou desempilha níveis
+df.explode('coluna_lista') # Expande listas em múltiplas linhas
+
+## Trabalhar com tempo (datetime)
+
+df['data'].dt.day
+df['data'].dt.month
+df['data'].dt.weekday
+df['data'].dt.is_month_end
+df['data'].dt.to_period('M')       # Agrupa por mês
+df.resample('W').mean()            # Reamostra por semana
+
+## Funções úteis para validação e debugging
+
+df.sample(5)                 # Amostra aleatória
+df.memory_usage()           # Memória ocupada
+df.equals(outro_df)         # Compara se dois DataFrames são iguais
+df.isin([1, 2, 3])          # Verifica se valores existem
